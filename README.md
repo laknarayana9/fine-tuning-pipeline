@@ -1,5 +1,7 @@
 # FinQA Fine-Tuning Portfolio
 
+[![Zero-Spend CI](https://github.com/laknarayana9/fine-tuning-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/laknarayana9/fine-tuning-pipeline/actions/workflows/ci.yml)
+
 This is an eval-driven fine-tuning portfolio project for financial-document QA using FinQA.
 
 The thesis is methodology: prepare clean financial QA data, decontaminate held-out examples,
@@ -7,11 +9,29 @@ create chat JSONL, run cost-controlled Fireworks LoRA SFT, deploy briefly, compa
 tuned checkpoints on identical IDs, report statistical uncertainty, analyze failures, and document
 what should happen next. The demo is secondary. The defensible eval loop is the product.
 
-Phase 1 is complete. The project produced a working pipeline and a directionally positive best
-smoke checkpoint, but it did not produce a finance-reliable model yet. That is an important part of
-the portfolio story: financial-document reasoning remains hard, and the project says that plainly.
+The current best checkpoint is the Phase 2 Qwen3 8B source-program SFT with a deterministic
+calculator. It is a meaningful portfolio result, but not a finance-reliable model.
 
-## Current Result
+## Latest Result (Phase 2 - Qwen3 8B source-program SFT)
+
+Fine-tuning Qwen3-8B to emit source numbers, operation class, and a FinQA program, with a
+deterministic calculator executing that program, reached **50.0% exact match** on the locked FinQA
+smoke-50 set. That is up from **24.0%** for the Qwen3 direct-answer baseline on the same paired IDs
+(**McNemar exact p = 0.01062**, statistically significant on this small set).
+
+Source-number supervision also improved on the prior targeted program SFT (44.0% to 50.0%) and cut
+the unsupported-figure rate from 56.0% to 48.0%. That incremental planner-vs-planner gain is
+directionally useful, but **not statistically definitive** on only 50 examples.
+
+Full run details, per-subtype breakdown, and failure analysis:
+[reports/qwen3_source_program_sft_run.md](reports/qwen3_source_program_sft_run.md). A one-page
+summary is available at [reports/latest_result.md](reports/latest_result.md).
+
+## Phase 1 Result (DeepSeek Coder 7B - historical)
+
+These Phase 1 numbers are preserved as the honest starting point. The negative results here,
+especially the 1k answerability run, directly motivated the Phase 2 program-planner and
+source-program recipes above.
 
 All paired rows below use the same 50 held-out `finqa_dev.smoke_50` examples.
 
@@ -48,7 +68,7 @@ from financial context.
 | Revenue is `500`, operating income is `75`, net income is `40`. | Use operating income, not net income, and divide by revenue. | `75 / 500 = 15%` |
 | Context only includes 2021 and 2022 revenue, but the question asks for 2024 growth. | Detect missing evidence instead of guessing. | `Final answer: not enough information` |
 
-That is why the next phase should focus on table grounding, source-number supervision, operation
+That is why the Phase 2 work focused on table grounding, source-number supervision, operation
 selection, and calculator/tool-assisted computation.
 
 ## Methodology
@@ -99,8 +119,8 @@ the right year or table column, preserve units, and decide whether the context i
 best future architecture is likely hybrid: a tuned model selects evidence and formula structure,
 then deterministic tools handle arithmetic, scaling, rounding, and formatting.
 
-This project intentionally measures that boundary. The current tuned checkpoint improved format
-discipline but still fails often at source-number and operation selection.
+This project intentionally measures that boundary. The current best checkpoint improves that
+planner-plus-calculator path, while still failing often at source-number and operation selection.
 
 ## Why Results Did Not Improve Much
 
@@ -124,10 +144,10 @@ See [docs/error_analysis_summary.md](docs/error_analysis_summary.md) and
 
 ## Next Experiments
 
-Recommended Phase 2 work:
+Recommended next work:
 
 1. Improve table serialization so rows, years, units, and labels are easier to recover.
-2. Add explicit source-number labels before the final answer.
+2. Continue explicit source-number labels before the final answer.
 3. Preserve useful FinQA reasoning traces, but keep targets concise enough for SFT.
 4. Build stronger ratio, percent-change, and signed-arithmetic slices.
 5. Add balanced abstention examples and an authored unanswerable eval set.
@@ -150,7 +170,7 @@ src/finqa_ft/          Pure Python eval/data/provider/stat modules
 tests/                 Hermetic unit tests and tiny fixtures
 assets/screenshots/    Curated visual evidence from Phase 1 runs
 cost_ledger.md         Planned and actual spend log
-model_card.md          Phase 1 checkpoint model card
+model_card.md          Model card for current and historical checkpoints
 ```
 
 ## Zero-Spend Quickstart
@@ -176,6 +196,7 @@ Network/model providers are gated by `ALLOW_MODEL_CALLS=1`.
 
 Start here:
 
+- [reports/latest_result.md](reports/latest_result.md): one-page summary of the best result.
 - [docs/current_state.md](docs/current_state.md): canonical status and run details.
 - [docs/phase_1_closeout.md](docs/phase_1_closeout.md): stop-state and resume checklist.
 - [reports/phase_1_results_summary.md](reports/phase_1_results_summary.md): compact result summary.
@@ -194,4 +215,3 @@ Start here:
 - Deployments are intentionally short-lived and deleted after eval.
 - The current model is not suitable for investment advice, real-time decisions, or production
   financial analysis.
-# ChatbotAgent

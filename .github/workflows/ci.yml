@@ -1,0 +1,41 @@
+name: Zero-Spend CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  ALLOW_MODEL_CALLS: "0"
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  test:
+    name: Tests and offline smoke checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Unit tests
+        run: python -B -m unittest discover -s tests
+
+      - name: Objective eval smoke
+        run: PYTHONPATH=src python -B eval/run_objective_eval.py tests/fixtures/predictions.jsonl --prediction-field tuned_answer
+
+      - name: Dataset normalization smoke
+        run: python data/build_dataset.py normalize-finqa tests/fixtures/finqa_raw_sample.json /tmp/finqa_sample.normalized.jsonl --source-split fixture
+
+      - name: Offline prediction smoke
+        run: python eval/run_predictions.py /tmp/finqa_sample.normalized.jsonl /tmp/finqa_sample.predictions.jsonl --provider offline_first_number
