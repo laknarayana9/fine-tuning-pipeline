@@ -1,0 +1,60 @@
+[
+  {
+    "id": "ACME/2024/page_1.pdf-1",
+    "pre_text": [
+      "The company reported annual results."
+    ],
+    "table": [
+      [
+        "",
+        "2023",
+        "2024"
+      ],
+      [
+        "Revenue",
+        "$ 10.0",
+        "$ 12.0"
+      ]
+    ],
+    "post_text": [
+      "Amounts are in millions."
+    ],
+    "qa": {
+      "question": "What was the percentage growth in revenue?",
+      "program": "divide(subtract(12.0, 10.0), 10.0)",
+      "exe_ans": "20%",
+      "gold_inds": [
+        "table_1"
+      ]
+    }
+  },
+  {
+    "id": "ACME/2024/page_1.pdf-2",
+    "pre_text": [
+      "The company reported annual results."
+    ],
+    "table": [
+      [
+        "",
+        "2023",
+        "2024"
+      ],
+      [
+        "Operating income",
+        "$ 4.0",
+        "$ 5.5"
+      ]
+    ],
+    "post_text": [
+      "Amounts are in millions."
+    ],
+    "qa": {
+      "question": "What was the increase in operating income?",
+      "program": "subtract(5.5, 4.0)",
+      "exe_ans": "1.5",
+      "gold_inds": [
+        "table_2"
+      ]
+    }
+  }
+]

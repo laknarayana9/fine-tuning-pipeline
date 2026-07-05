@@ -1,0 +1,3 @@
+{"id":"ex-1","subtype":"lookup","context":"Revenue was $1.2 million in 2024.","gold":"1200000","base_answer":"Revenue was $1.1 million.","tuned_answer":"Final answer: $1.2 million."}
+{"id":"ex-2","subtype":"ratio","context":"Operating margin rose from 14.1% to 16.4%.","gold":"16.4%","base_answer":"The answer is 14.1%.","tuned_answer":"Final answer: 0.164."}
+{"id":"ex-3","subtype":"unanswerable","context":"The table reports revenue only.","gold":"not enough information","base_answer":"The profit was $3 million.","tuned_answer":"There is not enough information to determine profit."}

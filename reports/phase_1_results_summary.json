@@ -1,0 +1,64 @@
+{
+  "project": "FinQA Fine-Tuning Portfolio",
+  "phase": "Phase 1 smoke evidence",
+  "base_model": "accounts/fireworks/models/deepseek-coder-7b-instruct-v1p5",
+  "platform": "Fireworks managed LoRA SFT",
+  "eval_set": "finqa_dev.smoke_50",
+  "num_eval_examples": 50,
+  "runs": [
+    {
+      "name": "base_deepseek_coder_7b",
+      "training_rows": 0,
+      "exact_match": 0.02,
+      "ci95": [
+        0.0,
+        0.06
+      ],
+      "format_violation_rate": 0.0,
+      "unsupported_figure_rate": 0.36
+    },
+    {
+      "name": "sft_smoke_500",
+      "training_rows": 500,
+      "exact_match": 0.06,
+      "ci95": [
+        0.0,
+        0.14
+      ],
+      "format_violation_rate": 0.0,
+      "unsupported_figure_rate": 0.24,
+      "paired_delta_vs_base": 0.04,
+      "mcnemar_p_value": 0.5
+    },
+    {
+      "name": "sft_answerability_1000",
+      "training_rows": 1000,
+      "exact_match": 0.02,
+      "ci95": [
+        0.0,
+        0.06
+      ],
+      "format_violation_rate": 0.0,
+      "unsupported_figure_rate": 0.64,
+      "paired_delta_vs_base": 0.0,
+      "mcnemar_p_value": 1.0
+    },
+    {
+      "name": "sft_calc_500",
+      "training_rows": 500,
+      "exact_match": 0.04,
+      "ci95": [
+        0.0,
+        0.1
+      ],
+      "format_violation_rate": 0.0,
+      "unsupported_figure_rate": 0.28,
+      "paired_delta_vs_base": 0.02,
+      "mcnemar_p_value": 1.0
+    }
+  ],
+  "summary_conclusion": "The pipeline works and the current checkpoint is a measured Phase 1 artifact; the next iteration should target reasoning quality.",
+  "dataset_source_url": "https://huggingface.co/datasets/ibm-research/finqa",
+  "dataset_repository_url": "https://github.com/czyssrs/FinQA",
+  "dataset_license": "CC-BY-4.0"
+}
